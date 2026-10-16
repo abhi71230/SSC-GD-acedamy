@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SSC GD Academy by Abhi Tiwari</title>
+<meta name="description" content="SSC GD की तैयारी के लिए मुफ्त bilingual mock tests, result history और leaderboard.">
+<style>
+:root{--blue:#155eaa;--navy:#102a43;--bg:#f3f6fb;--ink:#182b43;--green:#16804a;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(120deg,#102a43,#1769aa);color:#fff;padding:25px 16px;text-align:center}header h1{margin:0 0 8px;font-size:clamp(23px,5vw,36px)}header p{margin:0;opacity:.9}
+main{max-width:1000px;margin:20px auto;padding:0 14px}.card{background:white;border-radius:16px;padding:20px;margin-bottom:15px;box-shadow:0 4px 18px #102a4310}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.grow{flex:1;min-width:220px}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:9px;font-size:15px;margin:5px 0}
+button{border:0;border-radius:9px;padding:12px 16px;background:var(--blue);color:white;font-size:15px;font-weight:bold;cursor:pointer;margin:3px 2px}
+button.secondary{background:#e8eef5;color:#19344e}button:disabled{opacity:.45;cursor:not-allowed}
+.small{font-size:13px;color:#607187;line-height:1.6}.hidden{display:none!important}.tag{background:#eaf2fb;color:#14558b;padding:6px 10px;border-radius:99px;font-size:13px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.stat{background:#eef5fb;padding:13px;border-radius:10px;text-align:center}.stat b{display:block;font-size:22px;margin-top:5px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tabs button{background:#e8eef5;color:#19344e}.tabs button.active{background:var(--blue);color:white}
+.option{display:flex;gap:10px;border:1px solid #d5dee8;border-radius:10px;padding:13px;margin:9px 0;cursor:pointer}.option input{width:auto;margin:4px 0 0}
+.progress{height:8px;background:#e1e9f1;border-radius:20px;overflow:hidden;margin:12px 0}.progress div{height:100%;background:var(--blue);width:0}
+table{border-collapse:collapse;width:100%}td,th{text-align:left;border-bottom:1px solid #e4eaf1;padding:10px;font-size:14px}
+.notice{background:#fff7e6;border:1px solid #f2d38b;border-radius:10px;padding:12px;font-size:13px;line-height:1.5}
+footer{text-align:center;padding:20px;color:#65758a;font-size:13px}
+</style>
+</head>
+<body>
+<header><h1>SSC GD Academy</h1><p>by Abhi Tiwari · Daily Practice · Mock Tests · Leaderboard</p></header>
+<main>
+<section class="card">
+ <div class="row"><div class="grow"><h2 style="margin:0 0 5px">विद्यार्थी अकाउंट</h2><div class="small">ईमेल से साइन अप करें या अपने अकाउंट में लॉगिन करें।</div></div><span class="tag" id="authState">Guest</span></div>
+ <div id="authForm">
+  <div class="row"><div class="grow"><input id="email" type="email" autocomplete="email" placeholder="Email address"></div><div class="grow"><input id="password" type="password" autocomplete="current-password" placeholder="Password (कम से कम 6 अक्षर)"></div></div>
+  <input id="displayName" maxlength="40" placeholder="आपका नाम / Display name (साइन अप के लिए)">
+  <button id="signupBtn">Sign up</button><button id="loginBtn" class="secondary">Login</button>
+  <div id="authMsg" class="small" aria-live="polite"></div>
+ </div>
+ <div id="signedIn" class="hidden"><span id="welcome"></span> <button id="logoutBtn" class="secondary">Logout</button></div>
+ <p class="small">ईमेल/पासवर्ड Supabase Auth संभालता है। अपनी साइट पर किसी का पासवर्ड खुद स्टोर न करें।</p>
+</section>
+
+<section class="card">
+ <h2>तैयारी डैशबोर्ड</h2>
+ <div class="stats"><div class="stat">टेस्ट पूरे<strong id="testCount">0</strong></div><div class="stat">औसत प्रतिशत<strong id="avgScore">—</strong></div><div class="stat">आज का टेस्ट<strong id="todayStatus">बाकी</strong></div></div>
+ <div class="tabs"><button class="active" data-tab="daily">Daily Test</button><button data-tab="leader">Global Leaderboard</button><button data-tab="history">Result History</button><button data-tab="papers">Previous Papers</button></div>
+ <div id="tab-daily"><h3>80 प्रश्नों का मॉक टेस्ट</h3><p>हिंदी और English में अभ्यास करें। हर सही उत्तर +2 और गलत उत्तर −0.25 अंक। समय: 60 मिनट।</p><button id="startBtn">टेस्ट शुरू करें</button><div id="testArea" class="hidden">
+  <div class="row"><b id="qCount">प्रश्न 1 / 80</b><span class="tag" id="timer">60:00</span></div><div class="progress"><div id="bar"></div></div><p id="qText"></p><div id="opts"></div>
+  <div class="row"><button class="secondary" id="prevBtn">पिछला</button><button id="nextBtn">अगला</button><button class="secondary" id="submitBtn">टेस्ट जमा करें</button></div>
+  <p class="small" id="answerCount"></p>
+ </div><div id="testResult" class="hidden"></div></div>
+ <div id="tab-leader" class="hidden"><h3>Global Leaderboard</h3><p class="small">यह सूची ऑनलाइन डेटाबेस में सार्वजनिक किए गए सर्वोच्च स्कोर दिखाती है।</p><button id="refreshLeader" class="secondary">रैंकिंग रीफ़्रेश करें</button><div id="leaderArea" class="small">डेटा लोड करने के लिए लॉगिन और Supabase सेटअप आवश्यक है।</div></div>
+ <div id="tab-history" class="hidden"><h3>आपके पुराने रिज़ल्ट</h3><button id="refreshHistory" class="secondary">हिस्ट्री रीफ़्रेश करें</button><div id="historyArea" class="small">लॉगिन करने के बाद अपने रिज़ल्ट देखें।</div></div>
+ <div id="tab-papers" class="hidden"><h3>Previous Papers</h3><p>असली प्रश्नपत्र और आधिकारिक नोटिस SSC की वेबसाइट पर देखें। इस starter में अनधिकृत PDF शामिल नहीं हैं।</p><a href="https://ssc.gov.in/" target="_blank" rel="noopener">SSC की आधिकारिक वेबसाइट खोलें</a></div>
+</section>
+<section class="card"><h3>Admin / Setup status</h3><div id="setupStatus" class="small">Supabase सेटिंग जोड़ने के बाद अकाउंट और डेटाबेस चालू होंगे।</div><div class="notice">यह starter project है, SSC की आधिकारिक वेबसाइट नहीं। लाइव करने से पहले SQL schema चलाएँ, Auth settings जाँचें और कुछ टेस्ट अकाउंट से जाँच करें।</div></section>
+</main>
+<footer>SSC GD Academy by Abhi Tiwari · Free practice project</footer>
+
+<script type="module">
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+// STEP 1: Replace both placeholders with your Supabase Project URL and publishable/anon key.
+// Never put a service_role key in frontend code.
+const SUPABASE_URL = "PASTE_YOUR_SUPABASE_PROJECT_URL";
+const SUPABASE_ANON_KEY = "PASTE_YOUR_SUPABASE_PUBLISHABLE_OR_ANON_KEY";
+const configured = SUPABASE_URL.startsWith("https://") && !SUPABASE_URL.includes("PASTE_") && !SUPABASE_ANON_KEY.includes("PASTE_");
+const sb = configured ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+const $=id=>document.getElementById(id);
+let user=null, questions=[], answers=[], index=0, remaining=3600, interval=null, testActive=false;
+
+const bank=[
+["रीजनिंग","श्रृंखला पूरी करें: 2, 4, 8, 16, ?","Complete the series: 2, 4, 8, 16, ?","18","24","32","30",2,"हर संख्या दोगुनी है। / Each number doubles."],
+["रीजनिंग","यदि CAT को DBU लिखा जाए, DOG को कैसे लिखेंगे?","If CAT is coded as DBU, how is DOG coded?","EPH","EOG","DPH","FQI",0,"हर अक्षर के बाद वाला अक्षर। / Shift each letter forward by one."],
+["रीजनिंग","अलग शब्द चुनिए: सेब, आम, आलू, केला","Choose the odd one: Apple, Mango, Potato, Banana","सेब / Apple","आम / Mango","आलू / Potato","केला / Banana",2,"आलू सब्ज़ी है, बाकी फल हैं। / Potato is a vegetable."],
+["रीजनिंग","पुस्तक : पढ़ना :: भोजन : ?","Book : Read :: Food : ?","लिखना / Write","खाना / Eat","देखना / See","सुनना / Hear",1,"पुस्तक पढ़ी जाती है और भोजन खाया जाता है। / Books are read, food is eaten."],
+["सामान्य ज्ञान","भारत का संविधान कब लागू हुआ?","When did the Constitution of India come into effect?","15 अगस्त 1947","26 जनवरी 1950","26 नवंबर 1949","2 अक्टूबर 1950",1,"26 जनवरी 1950। / 26 January 1950."],
+["सामान्य ज्ञान","भारत की राजधानी क्या है?","What is the capital of India?","मुंबई / Mumbai","कोलकाता / Kolkata","नई दिल्ली / New Delhi","चेन्नई / Chennai",2,"भारत की राजधानी नई दिल्ली है। / New Delhi is India's capital."],
+["सामान्य ज्ञान","सौरमंडल का सबसे बड़ा ग्रह कौन-सा है?","Which is the largest planet in the Solar System?","पृथ्वी / Earth","मंगल / Mars","शनि / Saturn","बृहस्पति / Jupiter",3,"बृहस्पति सबसे बड़ा ग्रह है। / Jupiter is the largest planet."],
+["सामान्य ज्ञान","पौधे प्रकाश संश्लेषण में कौन-सी गैस लेते हैं?","Which gas do plants take in during photosynthesis?","ऑक्सीजन / Oxygen","नाइट्रोजन / Nitrogen","कार्बन डाइऑक्साइड / Carbon dioxide","हाइड्रोजन / Hydrogen",2,"पौधे कार्बन डाइऑक्साइड लेते हैं। / Plants take in carbon dioxide."],
+["गणित","200 का 25% कितना है?","What is 25% of 200?","25","40","50","75",2,"200 × 25/100 = 50।"],
+["गणित","12 × 8 = ?","12 × 8 = ?","86","96","108","92",1,"12 × 8 = 96।"],
+["गणित","₹500 में खरीदी वस्तु ₹600 में बेची। लाभ प्रतिशत?","An item bought for ₹500 is sold for ₹600. Profit percent?","10%","15%","20%","25%",2,"लाभ ₹100; 100/500 × 100 = 20%।"],
+["गणित","10, 20 और 30 का औसत कितना है?","What is the average of 10, 20 and 30?","15","20","25","30",1,"(10+20+30)/3 = 20।"],
+["हिंदी","'सूर्य' का पर्यायवाची चुनिए।","Choose a synonym of Surya (Sun).","निशा / Night","रवि / Ravi","पवन / Wind","जल / Water",1,"रवि, सूर्य का पर्यायवाची है। / Ravi is a synonym for the Sun."],
+["हिंदी","'दिन' का विलोम शब्द क्या है?","What is the antonym of day?","सुबह / Morning","शाम / Evening","रात / Night","प्रकाश / Light",2,"दिन का विलोम रात है। / Night is the opposite of day."],
+["हिंदी","शुद्ध वर्तनी चुनिए।","Choose the correct spelling.","आर्शीवाद","आशीर्वाद","आशिर्वाद","आर्शिवाद",1,"सही वर्तनी 'आशीर्वाद' है। / The correct spelling is Aashirvaad."]
+];
+// Demo pool is expanded to 80 by rotating the curated starter bank.
+// Replace this with 80 unique, fact-checked questions before public exam use.
+function buildQuestions(){let out=[];for(let i=0;i<80;i++){let b=bank[i%bank.length],shift=Math.floor(i/bank.length)%4;let opts=b.slice(3,7);let rotated=opts.map((_,j)=>opts[(j+shift)%4]);out.push({subject:b[0],hi:b[1],en:b[2],options:rotated,answer:(b[7]-shift+4)%4,explain:b[8]});}return out;}
+function msg(t){$("authMsg").textContent=t}
+function setAuthUI(){ $("authState").textContent=user?(user.email||"Logged in"):"Guest";$("authForm").classList.toggle("hidden",!!user);$("signedIn").classList.toggle("hidden",!user);$("welcome").textContent=user?`नमस्ते, ${user.user_metadata?.display_name||user.email}`:""; }
+async function loadUser(){if(!sb){$("setupStatus").textContent="Supabase config missing. README में दिए steps follow करके URL और publishable/anon key जोड़ें।";return;}const {data:{session}}=await sb.auth.getSession();user=session?.user||null;setAuthUI();sb.auth.onAuthStateChange((_event,session)=>{user=session?.user||null;setAuthUI();});await loadHistory();}
+$("signupBtn").onclick=async()=>{if(!sb)return alert("पहले Supabase config सेट करें।");const email=$("email").value.trim(),password=$("password").value,name=$("displayName").value.trim();if(!email||password.length<6||!name)return msg("नाम, ईमेल और कम से कम 6 अक्षर का पासवर्ड भरें।");const {data,error}=await sb.auth.signUp({email,password,options:{data:{display_name:name}}});if(error)return msg(error.message);msg(data.session?"Account बन गया और login हो गया।":"Account request बन गई। ईमेल verification के लिए inbox देखें।");}
+$("loginBtn").onclick=async()=>{if(!sb)return alert("पहले Supabase config सेट करें।");const {data,error}=await sb.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});if(error)return msg(error.message);user=data.user;setAuthUI();msg("Login सफल।");await loadHistory();}
+$("logoutBtn").onclick=async()=>{if(sb)await sb.auth.signOut();user=null;setAuthUI();};
+document.querySelectorAll("[data-tab]").forEach(b=>b.onclick=()=>{document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("active",x===b));["daily","leader","history","papers"].forEach(t=>$("tab-"+t).classList.toggle("hidden",t!==b.dataset.tab));if(b.dataset.tab==="leader")loadLeaderboard();if(b.dataset.tab==="history")loadHistory();});
+function renderQ(){let q=questions[index];$("qCount").textContent=`Question ${index+1} / 80 · प्रश्न ${index+1} / 80`;$("qText").textContent=q.hi+" / "+q.en;$("opts").innerHTML="";q.options.forEach((v,i)=>{let l=document.createElement("label");l.className="option";let r=document.createElement("input");r.type="radio";r.name="opt";r.checked=answers[index]===i;r.onchange=()=>{answers[index]=i;updateCount()};let s=document.createElement("span");s.textContent=String.fromCharCode(65+i)+". "+v;l.append(r,s);$("opts").append(l)});$("prevBtn").disabled=index===0;$("nextBtn").disabled=index===79;updateCount();}
+function updateCount(){$("answerCount").textContent=`उत्तर दिए गए / Answered: ${answers.filter(x=>x!==null).length} / 80`;$("bar").style.width=((index+1)/80*100)+"%";}
+$("startBtn").onclick=()=>{if(!user)return alert("टेस्ट रिज़ल्ट सेव करने के लिए पहले अकाउंट बनाएं या लॉगिन करें।");questions=buildQuestions();answers=Array(80).fill(null);index=0;remaining=3600;testActive=true;$("testResult").classList.add("hidden");$("testArea").classList.remove("hidden");renderQ();clearInterval(interval);interval=setInterval(()=>{remaining--;let m=Math.floor(remaining/60),s=remaining%60;$("timer").textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");if(remaining<=0)submitTest(true)},1000);}
+$("prevBtn").onclick=()=>{if(index>0){index--;renderQ()}};$("nextBtn").onclick=()=>{if(index<79){index++;renderQ()}};
+async function submitTest(auto=false){if(!testActive)return;if(!auto&&!confirm("टेस्ट जमा करें? / Submit test?"))return;testActive=false;clearInterval(interval);let correct=0,wrong=0,skipped=0;questions.forEach((q,i)=>{if(answers[i]===null)skipped++;else if(answers[i]===q.answer)correct++;else wrong++;});let score=Math.max(0,correct*2-wrong*.25),percent=Math.round(score/160*100);$("testArea").classList.add("hidden");$("testResult").classList.remove("hidden");$("testResult").innerHTML=`<h3>Result / परिणाम: ${score.toFixed(2)} / 160 (${percent}%)</h3><p>सही / Correct: ${correct} · गलत / Wrong: ${wrong} · छोड़े / Skipped: ${skipped}</p><details><summary>Answer key / उत्तर और व्याख्या</summary>${questions.map((q,i)=>`<p><b>${i+1}. ${q.hi}</b><br>आपका उत्तर: ${answers[i]===null?"नहीं दिया":q.options[answers[i]]}<br>सही उत्तर: ${q.options[q.answer]}<br><span class="small">${q.explain}</span></p>`).join("")}</details><p class="small">रिज़ल्ट ऑनलाइन सेव हो रहा है…</p>`;const {error}=await sb.from("test_results").insert({user_id:user.id,display_name:user.user_metadata?.display_name||user.email.split("@")[0],test_name:"SSC GD 80Q Mock",score:Number(score.toFixed(2)),max_score:160,correct_count:correct,wrong_count:wrong,skipped_count:skipped,percentage:percent});if(error){$("testResult").insertAdjacentHTML("beforeend",`<p class="small">Online save error: ${escapeHtml(error.message)}</p>`)}else{$("testResult").insertAdjacentHTML("beforeend","<p class='correct'>रिज़ल्ट ऑनलाइन सेव हो गया। / Result saved online.</p>");}await loadHistory();}
+$("submitBtn").onclick=()=>submitTest(false);
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+async function loadHistory(){if(!sb||!user){$("historyArea").textContent="लॉगिन करें और टेस्ट दें।";$("testCount").textContent="0";$("avgScore").textContent="—";return;}const {data,error}=await sb.from("test_results").select("id,test_name,score,max_score,percentage,correct_count,created_at").eq("user_id",user.id).order("created_at",{ascending:false}).limit(50);if(error){$("historyArea").textContent=error.message;return;}$("testCount").textContent=data.length;$("avgScore").textContent=data.length?Math.round(data.reduce((a,x)=>a+x.percentage,0)/data.length)+"%":"—";$("todayStatus").textContent=data.some(x=>new Date(x.created_at).toDateString()===new Date().toDateString())?"पूरा ✓":"बाकी";$("historyArea").innerHTML=data.length?`<table><tr><th>Test</th><th>Score</th><th>Date</th></tr>${data.map(x=>`<tr><td>${escapeHtml(x.test_name)}</td><td>${x.score}/${x.max_score} (${x.percentage}%)</td><td>${new Date(x.created_at).toLocaleDateString()}</td></tr>`).join("")}</table>`:"अभी कोई रिज़ल्ट नहीं।";}
+async function loadLeaderboard(){if(!sb){$("leaderArea").textContent="Supabase config जोड़ें।";return;}const {data,error}=await sb.rpc("get_leaderboard",{limit_count:50});if(error){$("leaderArea").textContent=error.message;return;}$("leaderArea").innerHTML=data.length?`<table><tr><th>Rank</th><th>Student</th><th>Score %</th></tr>${data.map((x,i)=>`<tr><td>${i+1}</td><td>${escapeHtml(x.display_name||"Student")}</td><td>${x.percentage}%</td></tr>`).join("")}</table>`:"अभी कोई प्रकाशित स्कोर नहीं।";}
+$("refreshLeader").onclick=loadLeaderboard;$("refreshHistory").onclick=loadHistory;
+loadUser();
+</script>
+</body></html>
